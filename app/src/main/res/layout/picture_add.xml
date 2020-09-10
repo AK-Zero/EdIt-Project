@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageButton
+        android:id="@+id/reject4"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:background="#000000"
+        android:src="@drawable/ic_clear_black_24dp"
+        app:layout_constraintBottom_toTopOf="@+id/chooseimg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="TODO" />
+
+    <ImageButton
+        android:id="@+id/cam"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="50dp"
+        android:background="#000000"
+        android:contentDescription="TODO"
+        android:src="@drawable/ic_camera_alt_white_24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chooseimg" />
+
+    <TextView
+        android:id="@+id/chooseimg"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="50dp"
+        android:background="#000000"
+        android:fontFamily="monospace"
+        android:gravity="center"
+        android:text="Choose Image"
+        android:textColor="#FFFFFF"
+        android:textSize="36sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
