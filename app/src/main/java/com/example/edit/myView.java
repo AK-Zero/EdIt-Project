@@ -733,6 +733,20 @@ public class myView extends View {
             float x = e.getX();
             float y = e.getY();
 
+            if(x<40){
+                x = 41;
+            }
+            if(x+41>canvas.getWidth()){
+                x = canvas.getWidth() - 41;
+            }
+            if(y<40){
+                y = 41;
+            }
+            if(y+41>canvas.getHeight()){
+                y = canvas.getHeight() - 41;
+            }
+
+
             Bitmap croppedBitmap = Bitmap.createBitmap(empty, (int) x - 40, (int) y -40, 80, 80);
             Matrix matrix = new Matrix();
             matrix.postScale(5.0f, 5.0f);
