@@ -130,7 +130,7 @@ public class Main2Activity extends AppCompatActivity implements MenuItem.OnMenuI
             matrix.postScale(scale, 0.9f);
         }
         if (bitmap.getHeight() < 270) {
-            float scale = 5.0f;
+            float scale = 4.0f;
             matrix.postScale(scale, scale);
         }
         if (bitmap.getHeight() > 2700) {
