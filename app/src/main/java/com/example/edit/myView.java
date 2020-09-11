@@ -18,6 +18,7 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.DialogFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +42,7 @@ public class myView extends View {
     TextPaint text;
     float x, y, lx, ly, cx, cy, r;
     int statint = 1, statint2 = 1, eng = 0;
-    boolean cropstat = false, circlecropstat = false, doodlestat = false, pickcolorstat = false, blurstat = false, textstat = false, picstat = false;
+    boolean cropstat = false, circlecropstat = false, doodlestat = false, pickcolorstat = false, blurstat = false, textstat = false, picstat = false , drawablestat = false;
     int width, height, xo = 0, yo = 0, yo1 = 0;
     double d11 = 0;
     Path path;
@@ -53,6 +55,8 @@ public class myView extends View {
     Drawable d;
     Bitmap bitmapx;
     int bmpx, bmpy, bmpwidth, savedheight2;
+    picInt actInt;
+    GestureDetector gestureDetector;
 
     public myView(Context context) {
         super(context);
@@ -86,6 +90,7 @@ public class myView extends View {
         p3.setStyle(Paint.Style.FILL);
         scale = new Paint();
         path = new Path();
+        gestureDetector = new GestureDetector(getContext() , new GestureListener());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             d = getResources().getDrawable(R.drawable.ic_code_black_24dp, null);
         }
@@ -144,15 +149,19 @@ public class myView extends View {
                 c.drawRect(bmpx - 10, bmpy - 10, bmpx + bitmapx.getWidth() + 10, bmpy + bitmapx.getHeight() + 10, p1);
                 canvas.drawCircle((float) (bmpx + bitmapx.getWidth() + 30), (float) (bmpy + bitmapx.getHeight() + 30), 25, p3);
                 c.drawCircle((float) (bmpx + bitmapx.getWidth() + 30), (float) (bmpy + bitmapx.getHeight() + 30), 25, p3);
-                d.setBounds(bmpx + bitmapx.getWidth() + 5, bmpy + bitmapx.getHeight() + 5, bmpx + bitmapx.getWidth() + 55, bmpy + bitmapx.getHeight() + 55);
-                d.draw(canvas);
-                d.draw(c);
+                if(drawablestat) {
+                    d.setBounds(bmpx + bitmapx.getWidth() + 5, bmpy + bitmapx.getHeight() + 5, bmpx + bitmapx.getWidth() + 55, bmpy + bitmapx.getHeight() + 55);
+                    d.draw(canvas);
+                    d.draw(c);
+                }
             } else if (eng == 7) {
                 canvas.drawRect(bmpx - 10, bmpy - 10, bmpx + bmpwidth + 10, bmpy + bitmapx.getHeight() * (float) (bmpwidth) / bitmapx.getWidth() + 10, p1);
                 c.drawRect(bmpx - 10, bmpy - 10, bmpx + bmpwidth + 10, bmpy + bitmapx.getHeight() * (float) (bmpwidth) / bitmapx.getWidth() + 10, p1);
-                d.setBounds(bmpx + bmpwidth + 5, (int) (bmpy + bitmapx.getHeight() * (float) (bmpwidth) / bitmapx.getWidth() + 5), bmpx + bmpwidth + 55, (int) (bmpy + bitmapx.getHeight() * (float) (bmpwidth) / bitmapx.getWidth() + 55));
-                d.draw(canvas);
-                d.draw(c);
+                if(drawablestat) {
+                    d.setBounds(bmpx + bmpwidth + 5, (int) (bmpy + bitmapx.getHeight() * (float) (bmpwidth) / bitmapx.getWidth() + 5), bmpx + bmpwidth + 55, (int) (bmpy + bitmapx.getHeight() * (float) (bmpwidth) / bitmapx.getWidth() + 55));
+                    d.draw(canvas);
+                    d.draw(c);
+                }
                 canvas.drawCircle((float) (bmpx + bmpwidth + 30), bmpy + bitmapx.getHeight() * (float) (bmpwidth) / bitmapx.getWidth() + 30, 25, p3);
                 c.drawCircle((float) (bmpx + bmpwidth + 30), bmpy + bitmapx.getHeight() * (float) (bmpwidth) / bitmapx.getWidth() + 30, 25, p3);
             }
@@ -211,7 +220,7 @@ public class myView extends View {
                         eng = 7;
                     }
                 }
-                return true;
+                return gestureDetector.onTouchEvent(event);
             }
             case MotionEvent.ACTION_MOVE: {
                 if (picstat) {
@@ -327,7 +336,7 @@ public class myView extends View {
                     path.lineTo(xx, yy);
                 }
                 postInvalidate();
-                return value;
+                return gestureDetector.onTouchEvent(event);
             }
             case MotionEvent.ACTION_UP: {
 
@@ -360,11 +369,11 @@ public class myView extends View {
                     updatepainttext();
                 }
                 postInvalidate();
-                return value;
+                return gestureDetector.onTouchEvent(event);
             }
 
         }
-        return value;
+        return gestureDetector.onTouchEvent(event);
     }
 
     public void setcrop() {
@@ -472,6 +481,8 @@ public class myView extends View {
         AmbilWarnaDialog colorPicker = new AmbilWarnaDialog(getContext(), u, new AmbilWarnaDialog.OnAmbilWarnaListener() {
             @Override
             public void onCancel(AmbilWarnaDialog dialog) {
+                bitmap = bitmaphistory.get(bitmaphistory.size() - 1).copy(Bitmap.Config.ARGB_8888, true);
+                bitmaphistory.remove(bitmaphistory.size() - 1);
             }
 
             @Override
@@ -488,6 +499,8 @@ public class myView extends View {
         });
         colorPicker.show();
     }
+
+
 
     public void startblur() {
         blurstat = true;
@@ -562,15 +575,19 @@ public class myView extends View {
     }
 
     public void colorfilterapplied() {
-        bitmap = empty.copy(Bitmap.Config.ARGB_8888, true);
-        scale = null;
+        if(scale!=null) {
+            bitmap = empty.copy(Bitmap.Config.ARGB_8888, true);
+            scale = null;
+        }
     }
 
     public void colorfiltercancelled() {
-        scale = null;
-        bitmap = bitmaphistory.get(bitmaphistory.size() - 1).copy(Bitmap.Config.ARGB_8888, true);
-        bitmaphistory.remove(bitmaphistory.size() - 1);
-        postInvalidate();
+        if(scale!=null) {
+            scale = null;
+            bitmap = bitmaphistory.get(bitmaphistory.size() - 1).copy(Bitmap.Config.ARGB_8888, true);
+            bitmaphistory.remove(bitmaphistory.size() - 1);
+            postInvalidate();
+        }
     }
 
     public void setTextBox(int color) {
@@ -589,34 +606,48 @@ public class myView extends View {
         textwidth = (int) text.measureText(textstring);
         if (!textstring.isEmpty()) {
             p3.setColor(Color.CYAN);
+            drawablestat = true;
         } else {
             p3.setColor(Color.TRANSPARENT);
+            drawablestat = false;
         }
         postInvalidate();
     }
 
     public void textapplied(String x) {
-        textstring = x;
-        textstat = false;
-        p3.setColor(Color.TRANSPARENT);
-        canvas.drawBitmap(bitmap, 0, 0, null);
-        canvas.drawText(textstring, (float) textx, (float) texty, text);
-        bitmap = empty.copy(Bitmap.Config.ARGB_8888, true);
-        textx = 120;
-        texty = 140;
-        textheight = 70;
-
+        if(textstat) {
+            textstring = x;
+            textstat = false;
+            p3.setColor(Color.TRANSPARENT);
+            drawablestat = false;
+            if(!textstring.isEmpty()) {
+                canvas.drawBitmap(bitmap, 0, 0, null);
+                canvas.drawText(textstring, (float) textx, (float) texty, text);
+                bitmap = empty.copy(Bitmap.Config.ARGB_8888, true);
+            }
+            else{
+                bitmap = bitmaphistory.get(bitmaphistory.size() - 1).copy(Bitmap.Config.ARGB_8888, true);
+                bitmaphistory.remove(bitmaphistory.size() - 1);
+                postInvalidate();
+            }
+            textx = 120;
+            texty = 140;
+            textheight = 70;
+        }
     }
 
     public void textrejected() {
-        textstat = false;
-        p3.setColor(Color.TRANSPARENT);
-        bitmap = bitmaphistory.get(bitmaphistory.size() - 1).copy(Bitmap.Config.ARGB_8888, true);
-        bitmaphistory.remove(bitmaphistory.size() - 1);
-        postInvalidate();
-        textx = 120;
-        texty = 140;
-        textheight = 70;
+        if(textstat) {
+            textstat = false;
+            p3.setColor(Color.TRANSPARENT);
+            drawablestat = false;
+            bitmap = bitmaphistory.get(bitmaphistory.size() - 1).copy(Bitmap.Config.ARGB_8888, true);
+            bitmaphistory.remove(bitmaphistory.size() - 1);
+            postInvalidate();
+            textx = 120;
+            texty = 140;
+            textheight = 70;
+        }
     }
 
     public void updatepainttext() {
@@ -662,6 +693,7 @@ public class myView extends View {
     public void setImageAdd(Bitmap b) {
         picstat = true;
         p3.setColor(Color.YELLOW);
+        drawablestat = true;
         bitmaphistory.add(Bitmap.createBitmap(
                 bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), null, false));
         bitmapx = b.copy(Bitmap.Config.ARGB_8888, true);
@@ -673,6 +705,7 @@ public class myView extends View {
     public void cancelimageadd() {
         picstat = false;
         p3.setColor(Color.TRANSPARENT);
+        drawablestat = false;
         postInvalidate();
         canvas.drawBitmap(bitmap, 0, 0, null);
         canvas.drawBitmap(bitmapx, bmpx, bmpy, null);
@@ -686,6 +719,31 @@ public class myView extends View {
                 bitmapx, 0, 0, bitmapx.getWidth(), bitmapx.getHeight(), matrix, true);
         bitmapx = bitmapx.copy(Bitmap.Config.ARGB_8888, true);
         postInvalidate();
+    }
+
+    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+        // event when double tap occurs
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            float x = e.getX();
+            float y = e.getY();
+
+            Bitmap croppedBitmap = Bitmap.createBitmap(empty, (int) x - 40, (int) y -40, 80, 80);
+            Matrix matrix = new Matrix();
+            matrix.postScale(5.0f, 5.0f);
+            croppedBitmap = Bitmap.createBitmap(
+                    croppedBitmap, 0, 0, croppedBitmap.getWidth(), croppedBitmap.getHeight(), matrix, false);
+            actInt.onZoom(croppedBitmap);
+            return true;
+        }
+    }
+    public void setInter(picInt inter){
+        actInt = inter;
     }
 
 }

@@ -113,6 +113,8 @@ public class Main2Activity extends AppCompatActivity implements MenuItem.OnMenuI
         Intent intent = getIntent();
         String imagepath = intent.getStringExtra("imageuri");
         imageeditor = findViewById(R.id.myV);
+        imageeditor.setLayerType(View.LAYER_TYPE_SOFTWARE , null);
+        imageeditor.setInter(this);
         Bitmap bitmap = null;
         bitmap = (Bitmap) intent.getExtras().get("photo");
         if (bitmap == null) {
@@ -151,7 +153,7 @@ public class Main2Activity extends AppCompatActivity implements MenuItem.OnMenuI
         params.bottomMargin = 250;
         imageeditor.setLayoutParams(params);
         imageeditor.setPath(resizedBitmap);
-
+        Toast.makeText(Main2Activity.this , "Double tap to see zoomed picture..." , Toast.LENGTH_SHORT).show();
 
         crop.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("SetTextI18n")
@@ -161,10 +163,13 @@ public class Main2Activity extends AppCompatActivity implements MenuItem.OnMenuI
                     Toast.makeText(Main2Activity.this, "Long click for shape options...", Toast.LENGTH_SHORT).show();
                 }
                 if (cropstatr) {
+                    Toast.makeText(Main2Activity.this , "Your cropped image..." , Toast.LENGTH_SHORT).show();
                     Bitmap bitmap1 = imageeditor.hidecrop();
                     DialogFragment dialogFragment = new MyCustomDialogFragment(bitmap1);
                     dialogFragment.show(getSupportFragmentManager(), "dialog");
-                    crop.setBackgroundColor(Color.BLACK);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        crop.setBackground(getDrawable(R.drawable.border));
+                    }
                     cropstatr = !cropstatr;
                 }
                 if (cropstatc) {
@@ -176,10 +181,13 @@ public class Main2Activity extends AppCompatActivity implements MenuItem.OnMenuI
 
                         @Override
                         public void onOk(AmbilWarnaDialog dialog, int color) {
+                            Toast.makeText(Main2Activity.this , "Your cropped image..." , Toast.LENGTH_SHORT).show();
                             Bitmap bitmap1 = imageeditor.hidecirclecrop(color);
                             DialogFragment dialogFragment = new MyCustomDialogFragment(bitmap1);
                             dialogFragment.show(getSupportFragmentManager(), "dialog");
-                            crop.setBackgroundColor(Color.BLACK);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                crop.setBackground(getDrawable(R.drawable.border));
+                            }
                             cropstatc = !cropstatc;
                         }
                     });
@@ -195,12 +203,16 @@ public class Main2Activity extends AppCompatActivity implements MenuItem.OnMenuI
                     if (!cropstatr && !cropstatc && !blurstat && !pickcolorstat && !picstat) {
                         imageeditor.setdoodle();
                         Toast.makeText(Main2Activity.this, "Click again to disable...", Toast.LENGTH_SHORT).show();
-                        doodle.setBackgroundColor(Color.BLUE);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            doodle.setBackground(getDrawable(R.drawable.borderblue));
+                        }
                         doodlestat = true;
                     }
                 } else {
                     imageeditor.hidedoodle();
-                    doodle.setBackgroundColor(Color.BLACK);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        doodle.setBackground(getDrawable(R.drawable.border));
+                    }
                     doodlestat = false;
                 }
                 if (blurstat) {
@@ -295,19 +307,20 @@ public class Main2Activity extends AppCompatActivity implements MenuItem.OnMenuI
             }
         });
         pickcolor.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
                 if (!pickcolorstat) {
                     if (!cropstatc && !cropstatr && !doodlestat && !blurstat && !picstat) {
                         pickcolor.setText("STOP");
                         Toast.makeText(Main2Activity.this, "Choose pixel", Toast.LENGTH_SHORT).show();
-                        pickcolor.setBackgroundColor(Color.BLUE);
+                        pickcolor.setBackground(getDrawable(R.drawable.borderblue));
                         imageeditor.pickcolor();
                         pickcolorstat = true;
                     }
                 } else {
                     pickcolor.setText("SWAP COLOR");
-                    pickcolor.setBackgroundColor(Color.BLACK);
+                    pickcolor.setBackground(getDrawable(R.drawable.border));
                     imageeditor.stoppickcolor();
                     pickcolorstat = false;
                 }
@@ -326,18 +339,19 @@ public class Main2Activity extends AppCompatActivity implements MenuItem.OnMenuI
             }
         });
         blur.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
                 if (!blurstat) {
                     if (!doodlestat && !cropstatr && !cropstatc && !pickcolorstat && !picstat) {
                         Toast.makeText(Main2Activity.this, "Click again after choosing area to blur...", Toast.LENGTH_SHORT).show();
                         imageeditor.startblur();
-                        blur.setBackgroundColor(Color.BLUE);
+                        blur.setBackground(getDrawable(R.drawable.borderblue));
                         blurstat = true;
                     }
                 } else {
                     imageeditor.stopblur();
-                    blur.setBackgroundColor(Color.BLACK);
+                    blur.setBackground(getDrawable(R.drawable.border));
                     blurstat = false;
                 }
                 if (doodlestat) {
@@ -496,7 +510,7 @@ public class Main2Activity extends AppCompatActivity implements MenuItem.OnMenuI
                         colorfilter.setVisibility(View.VISIBLE);
                         colorfilter.setAnimation(animation1);
                     }
-                }, 650);
+                }, 450);
                 imageeditor.colorfilterapplied();
             }
         });
@@ -522,7 +536,7 @@ public class Main2Activity extends AppCompatActivity implements MenuItem.OnMenuI
                         colorfilter.setVisibility(View.VISIBLE);
                         colorfilter.setAnimation(animation1);
                     }
-                }, 650);
+                }, 450);
                 imageeditor.colorfiltercancelled();
             }
         });
@@ -708,6 +722,7 @@ public class Main2Activity extends AppCompatActivity implements MenuItem.OnMenuI
         });
 
         picture.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
                 if (!picstat) {
@@ -715,12 +730,12 @@ public class Main2Activity extends AppCompatActivity implements MenuItem.OnMenuI
                         DialogFragment dialogFragment = new pictureAdd(Main2Activity.this);
                         dialogFragment.show(getSupportFragmentManager(), "picadd");
                         dialogFragment.setCancelable(false);
-                        picture.setBackgroundColor(Color.BLUE);
+                        picture.setBackground(getDrawable(R.drawable.borderblue));
                         picstat = true;
                     }
                 } else {
                     imageeditor.cancelimageadd();
-                    picture.setBackgroundColor(Color.BLACK);
+                    picture.setBackground(getDrawable(R.drawable.border));
                     picstat = false;
                 }
                 if (doodlestat) {
@@ -831,7 +846,9 @@ public class Main2Activity extends AppCompatActivity implements MenuItem.OnMenuI
         if (!cropstatr && !cropstatc && !doodlestat && !blurstat && !pickcolorstat && !picstat) {
             imageeditor.setcrop();
             Toast.makeText(Main2Activity.this, "Click again to see cropped picture...", Toast.LENGTH_SHORT).show();
-            crop.setBackgroundColor(Color.BLUE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                crop.setBackground(getDrawable(R.drawable.borderblue));
+            }
             cropstatr = !cropstatr;
         }
         if (doodlestat) {
@@ -855,7 +872,9 @@ public class Main2Activity extends AppCompatActivity implements MenuItem.OnMenuI
         if (!cropstatc && !cropstatr && !doodlestat && !blurstat && !pickcolorstat && !picstat) {
             imageeditor.setcirclecrop();
             Toast.makeText(Main2Activity.this, "Click again to see cropped picture...", Toast.LENGTH_SHORT).show();
-            crop.setBackgroundColor(Color.BLUE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                crop.setBackground(getDrawable(R.drawable.borderblue));
+            }
             cropstatc = !cropstatc;
         }
         if (doodlestat) {
@@ -908,7 +927,15 @@ public class Main2Activity extends AppCompatActivity implements MenuItem.OnMenuI
     @Override
     public void setback() {
         picstat = false;
-        picture.setBackgroundColor(Color.BLACK);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            picture.setBackground(getDrawable(R.drawable.border));
+        }
+    }
+
+    @Override
+    public void onZoom(Bitmap bmp) {
+        DialogFragment dialogFragment = new MyCustomDialogFragment(bmp);
+        dialogFragment.show(getSupportFragmentManager(), "dialog");
     }
 
     @Override
@@ -989,7 +1016,9 @@ public class Main2Activity extends AppCompatActivity implements MenuItem.OnMenuI
         }
         if(data == null){
             picstat = false;
-            picture.setBackgroundColor(Color.BLACK);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                picture.setBackground(getDrawable(R.drawable.border));
+            }
         }
     }
 }

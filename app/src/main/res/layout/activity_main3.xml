@@ -12,7 +12,7 @@
         android:id="@+id/textView7"
         android:layout_width="0dp"
         android:layout_height="100dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginBottom="80dp"
         android:background="#000000"
         android:fontFamily="monospace"
         android:gravity="center"
@@ -20,9 +20,9 @@
         android:textColor="#FFFFFF"
         android:textSize="30sp"
         android:textStyle="bold|italic"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spla" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/textView6"
@@ -44,6 +44,8 @@
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_marginTop="50dp"
+        android:layout_marginBottom="61dp"
+        app:layout_constraintBottom_toTopOf="@+id/textView7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6"

@@ -44,7 +44,6 @@ public class MyCustomDialogFragment extends DialogFragment {
         share = v.findViewById(R.id.share2);
         croppedimg = v.findViewById(R.id.croppedimg);
         croppedimg.setImageBitmap(bmp);
-        Toast.makeText(getContext() , "Your cropped image..." , Toast.LENGTH_SHORT).show();
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
